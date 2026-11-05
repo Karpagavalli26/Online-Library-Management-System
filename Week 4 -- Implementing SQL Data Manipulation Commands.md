@@ -1,56 +1,135 @@
 # Online Library Management System -- (Weeks 4)
+
 ## Week 4 -- Implementing SQL Data Manipulation Commands
-### 1. DML overview
+
+### 1. DML Overview
+
 DML changes the records stored in tables. INSERT adds rows, UPDATE changes existing rows, and DELETE removes selected rows. SELECT retrieves rows and is commonly taught alongside DML in this weekly plan.
+
 ### 2. INSERT
-Syntax: INSERT INTO table_name (column1, column2) VALUES (value1, value2);
+
+**Description:** INSERT is used to add new records into a table.
+
+**Syntax:**
 
 ```sql
-INSERT INTO CATEGORY (category_id, category_name, description) VALUES (1, 'Computer Science', 'Computing books');\nINSERT INTO AUTHOR (author_id, author_name, biography) VALUES (1, 'A. Kumar', 'Database author');
+INSERT INTO table_name (column1, column2)
+VALUES (value1, value2);
 ```
-Expected result in SQL*Plus: 1 row created. (Displayed after each successful INSERT.)
+
+**SQL Queries:**
+
+```sql
+INSERT INTO CATEGORY VALUES (1,'Computer Science','Programming Books');
+INSERT INTO CATEGORY VALUES (2,'Mathematics','Math Books');
+
+INSERT INTO AUTHOR VALUES (1,'A Kumar','Database Author');
+INSERT INTO AUTHOR VALUES (2,'R Meena','Programming Author');
+
+INSERT INTO PUBLISHER VALUES (1,'Tech Books','9876500001');
+
+INSERT INTO MEMBER VALUES
+(101,'Arun Kumar','arun@mail.com','9000000001',SYSDATE,'STUDENT');
+
+INSERT INTO MEMBER VALUES
+(102,'Bala Devi','bala@mail.com','9000000002',SYSDATE,'STUDENT');
+
+INSERT INTO BOOK VALUES
+(201,'ISBN001','Oracle Database',1,1,1,650,5,5);
+
+INSERT INTO BOOK VALUES
+(202,'ISBN002','Python Basics',1,2,1,500,4,4);
+
+INSERT INTO BOOK_ISSUE VALUES
+(301,201,101,SYSDATE,SYSDATE+14,'ISSUED');
+
+COMMIT;
+```
+
+**Expected Result:** Records are inserted successfully into the respective tables.
 
 ### 3. UPDATE
-```sql
-UPDATE BOOK SET available_copies = 5 WHERE book_id = 101;
-```
-Expected result: 1 row updated, if BOOK_ID 101 exists. Always use a WHERE clause when only selected rows should change.
 
-### 4. DELETE
+**Description:** UPDATE modifies existing records in a table.
+
 ```sql
-DELETE FROM MEMBER WHERE member_id = 105;
+UPDATE BOOK
+SET AVAILABLE_COPIES=4
+WHERE BOOK_ID=201;
 ```
-Expected result: 1 row deleted only if the member exists and no related BOOK_ISSUE row prevents deletion. A foreign-key constraint may reject deletion of a parent row that is referenced by a child row.
+
+**Expected Result:** 1 row updated.
+
+### 4. ROLLBACK
+
+**Description:** ROLLBACK cancels uncommitted changes.
+
+```sql
+ROLLBACK;
+```
+
+**Expected Result:** The previous uncommitted changes are cancelled.
 
 ### 5. SELECT, WHERE and ORDER BY
+
+**Description:** SELECT retrieves records, WHERE filters records based on conditions, and ORDER BY sorts the results.
+
 ```sql
-SELECT book_id, title, price FROM BOOK WHERE price > 500 ORDER BY price DESC;
+SELECT * FROM BOOK;
+
+SELECT * FROM MEMBER;
+
+SELECT TITLE,PRICE
+FROM BOOK
+WHERE PRICE>400
+ORDER BY PRICE DESC;
 ```
-WHERE filters rows. ORDER BY sorts the result. ASC is ascending (default); DESC is descending.
 
+### 6. CASE Expression
 
-### 6. Arithmetic expressions
-``` sql
-SELECT title, price, price * 0.10 AS discount FROM BOOK;
-```
-Arithmetic operators include +, -, * and /. The expression is calculated for each returned row. The example displays a 10% amount; it does not update the stored price.
+**Description:** CASE returns a value based on specified conditions.
 
-### 7. CASE expression
 ```sql
-SELECT title, available_copies, CASE WHEN available_copies > 0 THEN 'Available' ELSE 'Not Available' END AS book_status FROM BOOK;
+SELECT TITLE,
+CASE
+WHEN AVAILABLE_COPIES>0 THEN 'AVAILABLE'
+ELSE 'NOT AVAILABLE'
+END STATUS
+FROM BOOK;
 ```
-CASE returns a value based on conditions. In a SELECT statement it can display a derived status without changing the table.
 
-### 8. Substitution variables in SQL*Plus
+### 7. Substitution Variables in SQL*Plus
+
+**Description:** The ampersand (&) asks the user to enter a value when the query executes.
+
 ```sql
-SELECT book_id, title FROM BOOK WHERE category_id = &category_no;\nACCEPT p_member NUMBER PROMPT 'Enter member ID: '\nSELECT issue_id, book_id, issue_date FROM BOOK_ISSUE WHERE member_id = &p_member;
-```
-The ampersand (&) asks SQLPlus to substitute a value when the statement runs. ACCEPT can define a named SQLPlus variable for a prompt. Substitution is text replacement, not a bind variable.
-
-### 9. Transaction control
-COMMIT makes the current transaction permanent. ROLLBACK cancels uncommitted changes. SAVEPOINT marks a point to which a transaction can be rolled back. Use COMMIT only after checking the changes.
-````sql
-UPDATE BOOK SET available_copies = available_copies - 1 WHERE book_id = 101;\nSAVEPOINT after_update;\n-- Check the affected data before deciding\nCOMMIT;
+SELECT TITLE
+FROM BOOK
+WHERE CATEGORY_ID=&CATEGORY_NO;
 ```
 
+### 8. Transaction Control
 
+**Description:**
+
+- **COMMIT:** Saves changes permanently.
+- **ROLLBACK:** Cancels uncommitted changes.
+- **SAVEPOINT:** Creates a point to which a transaction can be rolled back.
+
+**SQL Query:**
+
+```sql
+UPDATE BOOK
+SET AVAILABLE_COPIES=AVAILABLE_COPIES-1
+WHERE BOOK_ID=201;
+
+SAVEPOINT after_update;
+
+ROLLBACK TO after_update;
+
+ROLLBACK;
+```
+
+---
+
+**End of Week 4 – SQL Data Manipulation Commands**
